@@ -8,7 +8,7 @@ PrintMessage()
 	printf "\033[33m--> $1\033[0m\n"
 }
 
-BUILDROOT_VERSION=2021.02.7
+BUILDROOT_VERSION=2023.08.3
 
 # Check arguments
 if [ $# -ne 3 ]
