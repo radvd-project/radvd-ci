@@ -50,7 +50,7 @@ jobs:
           zstd -T0 -19 --rm -v ${{ env.BUILDROOT_DIRECTORY_NAME }}.tar
       - name: Deploy image to repository release
         if: startsWith(github.ref, 'refs/tags')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2.2.0
         with:
           files: ${{ env.BUILDROOT_DIRECTORY_NAME }}.tar.zst
           name: ${{ github.ref_name }}
