@@ -41,9 +41,11 @@ jobs:
         run: |
           bash -x ${{ github.workspace }}/build-image.sh ${{ matrix.defconfig_name }} ${{ matrix.libc_name }} /home/runner
       - name: Archive image
+        if: startsWith(github.ref, 'refs/tags')
         run: |
           tar -c ${{ env.BUILDROOT_DIRECTORY_NAME }} -f ${{ env.BUILDROOT_DIRECTORY_NAME }}.tar
       - name: Compress image
+        if: startsWith(github.ref, 'refs/tags')
         run: |
           zstd -T0 -19 --rm -v ${{ env.BUILDROOT_DIRECTORY_NAME }}.tar
       - name: Deploy image to repository release
