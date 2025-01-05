@@ -1,10 +1,19 @@
 name: Generate prebuilt images
-on: [push, pull_request]
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*'
+  workflow_dispatch:
 
 jobs:
   buildroot:
     name: Build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         defconfig_name:
@@ -32,14 +41,16 @@ jobs:
         run: |
           bash -x ${{ github.workspace }}/build-image.sh ${{ matrix.defconfig_name }} ${{ matrix.libc_name }} /home/runner
       - name: Archive image
+        if: startsWith(github.ref, 'refs/tags')
         run: |
           tar -c ${{ env.BUILDROOT_DIRECTORY_NAME }} -f ${{ env.BUILDROOT_DIRECTORY_NAME }}.tar
       - name: Compress image
+        if: startsWith(github.ref, 'refs/tags')
         run: |
           zstd -T0 -19 --rm -v ${{ env.BUILDROOT_DIRECTORY_NAME }}.tar
       - name: Deploy image to repository release
         if: startsWith(github.ref, 'refs/tags')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2.2.0
         with:
           files: ${{ env.BUILDROOT_DIRECTORY_NAME }}.tar.zst
           name: ${{ github.ref_name }}
